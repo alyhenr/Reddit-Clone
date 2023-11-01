@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         subredditId: newSubreddit.id,
       },
     });
-    return new Response(`${newSubreddit.name} created!`, { status: 201 });
+    return new Response(`${newSubreddit.name}`, { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return new Response(err.message, { status: 422 });
