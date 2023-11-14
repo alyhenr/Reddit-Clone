@@ -59,7 +59,13 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
         if (idx === posts.length - 1) {
           return (
             <li key={post.id} ref={ref}>
-              <Post subredditName={post.subreddit.name} post={post} />
+              <Post
+                subredditName={post.subreddit.name}
+                post={post}
+                commentAmt={post.comments.length}
+                currentVote={userVote}
+                votesAmt={votes}
+              />
             </li>
           );
         } else {
@@ -68,6 +74,9 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
               subredditName={post.subreddit.name}
               post={post}
               key={post.id}
+              commentAmt={post.comments.length}
+              currentVote={userVote}
+              votesAmt={votes}
             />
           );
         }

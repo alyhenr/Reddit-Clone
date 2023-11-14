@@ -1,9 +1,11 @@
 "use client";
 
 import { formatTimeToNow } from "@/lib/utils";
-import { Post, User, Vote } from "@prisma/client";
+import { Post, User, Vote, VoteType } from "@prisma/client";
 import { MessageSquare } from "lucide-react";
 import React, { useRef } from "react";
+import EditorOutput from "./EditorOutput";
+import PostVoteClient from "./post-vote/PostVoteClient";
 
 type PostProps = {
   subredditName: string;
@@ -11,13 +13,28 @@ type PostProps = {
     author: User;
     votes: Vote;
   };
+  commentAmt: number;
+  votesAmt: number;
+  currentVote?: VoteType | null;
 };
 
-const Post = ({ subredditName, post }: PostProps) => {
+const Post = ({
+  subredditName,
+  post,
+  commentAmt,
+  votesAmt,
+  currentVote,
+}: PostProps) => {
   const pRef = useRef<HTMLDivElement>(null);
   return (
     <div className="rounded-md bg-white shadow">
       <div className="px-6 py-4 flex justify-between">
+        <PostVoteClient
+          postId={post.id}
+          initialVote={currentVote ?? null}
+          initialVotesAmt={votesAmt}
+        />
+
         <div className="w-0 flex-1">
           <div className="max-h-40 mt-1 text-xs text-gray-500">
             {subredditName ? (
@@ -32,7 +49,7 @@ const Post = ({ subredditName, post }: PostProps) => {
                 <span className="px-1">•</span>
               </>
             ) : null}
-            <span>Posted by {post.author.name}</span>{" "}
+            <span>Posted by u/{post.author.name}</span>{" "}
             {formatTimeToNow(new Date(post.createdAt))}
           </div>
           <a href={`/r/${subredditName}/post/${post.id}`}>
@@ -42,16 +59,14 @@ const Post = ({ subredditName, post }: PostProps) => {
           </a>
 
           <div
-            className="relative text-sm mx-h-40 w-full overflow-clip"
+            className="relative text-sm max-h-40 w-full overflow-clip"
             ref={pRef}
           >
-            {pRef.current?.clientHeight === 160 && (
-              <div
-                className="
-                absolute bottom-0 left-0 h-24 w-full bg-gradient-to-top from-white to-transparent
-              "
-              ></div>
-            )}
+            <EditorOutput content={post.content} />
+            {pRef.current?.clientHeight === 160 ? (
+              // blur bottom if content is too long
+              <div className="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent"></div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -61,7 +76,7 @@ const Post = ({ subredditName, post }: PostProps) => {
           href={`/r/${subredditName}/post/${post.id}`}
           className="w-fit flex items-center gap-2"
         >
-          <MessageSquare />
+          <MessageSquare className="h-4 w-4" /> {commentAmt} comments
         </a>
       </div>
     </div>
