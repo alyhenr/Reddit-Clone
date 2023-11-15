@@ -72,7 +72,7 @@ export async function PATCH(req: Request) {
     if (votesAmt >= VOTES_STANDARD_CACHE) {
       const cachePayload: CachedPost = {
         id: post.id,
-        authorName: session.user.name ?? "",
+        authorName: session.user.username ?? "",
         content: JSON.stringify(post.content),
         createdAt: post.createdAt,
         currentVote: voteType,
