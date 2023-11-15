@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { ExtendedPost } from "@/types/db";
 
@@ -44,6 +44,14 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
   );
 
   const posts = data?.pages.flatMap((page) => page) ?? initialPosts;
+
+  // Fecthing more posts once the user reaches the end of the page
+  useEffect(() => {
+    if (entry?.isIntersecting) {
+      fetchNextPage();
+    }
+  }, [entry, fetchNextPage]);
+
   return (
     <ul className="flex flex-col col-span-2 space-y-6">
       {posts.map((post: ExtendedPost, idx) => {
