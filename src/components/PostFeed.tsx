@@ -8,7 +8,7 @@ import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { INFINITE_SCOLLING_PAGINATION_RESULTS } from "@/config";
 import axios from "axios";
-import { Vote } from "@prisma/client";
+import { Vote, VoteType } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Post from "./Post";
 
@@ -29,7 +29,7 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
     ["infinite-query"],
     async ({ pageParam = 1 }) => {
       const query =
-        `/api/post?limit=${INFINITE_SCOLLING_PAGINATION_RESULTS}&page=${pageParam}` +
+        `/api/posts?limit=${INFINITE_SCOLLING_PAGINATION_RESULTS}&page=${pageParam}` +
         (!!subredditName ? `&subredditName=${subredditName}` : "");
 
       const { data } = await axios.get(query);
@@ -47,9 +47,9 @@ const PostFeed = ({ initialPosts, subredditName }: PostFeedProps) => {
   return (
     <ul className="flex flex-col col-span-2 space-y-6">
       {posts.map((post: ExtendedPost, idx) => {
-        let userVote = null;
+        let userVote: VoteType | null = null;
         const votes = post.votes.reduce((acc: number, vote: Vote) => {
-          if (vote.userId === session?.user.id) userVote = vote;
+          if (vote.userId === session?.user.id) userVote = vote.type;
 
           if (vote.type === "UP") return acc + 1;
           else if (vote.type === "DOWN") return acc - 1;
