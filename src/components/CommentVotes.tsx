@@ -4,42 +4,40 @@ import React, { useEffect, useState } from "react";
 import useCustomToast from "@/hooks/use-custom-toast";
 import { usePrevious } from "@mantine/hooks";
 import { VoteType } from "@prisma/client";
-import { Button } from "../ui/Button";
+import { Button } from "./ui/Button";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { PostVoteRequest } from "@/lib/validators/vote";
+import { CommentVoteRequest } from "@/lib/validators/vote";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/use-toast";
 
-type PostVoteClientProps = {
-  postId: string;
+type CommentVotesProps = {
+  commentId: string;
   initialVotesAmt: number;
-  initialVote: VoteType | null;
+  initialVote?: VoteType | null;
 };
 
-const PostVoteClient = ({
+const CommentVotes = ({
   initialVote,
   initialVotesAmt,
-  postId,
-}: PostVoteClientProps) => {
+  commentId,
+}: CommentVotesProps) => {
   const { loginToast } = useCustomToast();
   const [votesAmt, setVotesAmt] = useState<number>(initialVotesAmt);
-  const [currentVote, setCurrentVote] = useState<VoteType | null>(initialVote);
+  const [currentVote, setCurrentVote] = useState<VoteType | null>(
+    initialVote ?? null
+  );
   const prevVote = usePrevious<VoteType | null>(currentVote);
-
-  useEffect(() => {
-    setCurrentVote(initialVote);
-  }, [initialVote]);
 
   const { mutate: registerVote } = useMutation({
     mutationFn: async (voteType: VoteType) => {
-      const payload: PostVoteRequest = {
-        postId,
+      const payload: CommentVoteRequest = {
+        commentId,
         voteType,
       };
 
-      await axios.patch("/api/subreddit/post/vote", payload);
+      await axios.patch("/api/subreddit/post/comment/vote", payload);
     },
     onError(err, voteType: VoteType) {
       setVotesAmt((prev) => prev + (voteType === "UP" ? 1 : -1));
@@ -73,7 +71,7 @@ const PostVoteClient = ({
   });
 
   return (
-    <div className="flex sm:flex-col gap-4 sm:gap-0 pr-6 sm:w-20 pb-4 sm:pb-0">
+    <div className="flex gap-1 mt-2">
       <Button
         onClick={() => registerVote("UP")}
         size="sm"
@@ -107,4 +105,4 @@ const PostVoteClient = ({
   );
 };
 
-export default PostVoteClient;
+export default CommentVotes;
