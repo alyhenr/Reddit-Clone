@@ -5,6 +5,7 @@ import { Icons } from "./Icons";
 import { getAuthSession } from "@/lib/auth";
 
 import UserIconNav from "./UserIconNav";
+import SearchBar from "./SearchBar";
 
 const NavBar = async () => {
   const session = await getAuthSession();
@@ -17,6 +18,8 @@ const NavBar = async () => {
             Brodit
           </p>
         </Link>
+
+        <SearchBar />
 
         {session ? (
           <UserIconNav user={session.user} />
