@@ -10,7 +10,6 @@ export async function PATCH(req: Request) {
 
     const session = await getAuthSession();
     if (!session) return new Response("Unauthorized", { status: 401 });
-    console.log(body);
 
     await db.comment.create({
       data: { postId, text, authorId: session?.user.id, replyToId },

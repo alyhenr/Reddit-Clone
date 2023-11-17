@@ -14,6 +14,7 @@ import { Textarea } from "./ui/Textarea";
 import { useMutation } from "@tanstack/react-query";
 import { CommentRequest } from "@/lib/validators/comment";
 import axios from "axios";
+import { toast } from "@/hooks/use-toast";
 
 type ExtendedComment = Comment & {
   votes: CommentVote[];
@@ -24,21 +25,14 @@ type PostCommentProps = {
   comment: ExtendedComment;
   currentVote: VoteType | null;
   votesAmt: number;
-  postId: string;
 };
 
-const PostComment = ({
-  comment,
-  currentVote,
-  votesAmt,
-  postId,
-}: PostCommentProps) => {
+const PostComment = ({ comment, currentVote, votesAmt }: PostCommentProps) => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const [isReplying, setIsReplying] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
-
-  const router = useRouter();
 
   const { mutate: reply, isLoading } = useMutation({
     mutationFn: async ({ postId, text, replyToId }: CommentRequest) => {
@@ -49,6 +43,18 @@ const PostComment = ({
         payload
       );
       return data;
+    },
+    onSuccess: () => {
+      setIsReplying(false);
+      setInput("");
+      router.refresh();
+    },
+    onError: () => {
+      toast({
+        title: "Something went wrong...",
+        description: "Your comment was not published",
+        variant: "destructive",
+      });
     },
   });
 
@@ -119,13 +125,14 @@ const PostComment = ({
               <Button
                 isLoading={isLoading}
                 disabled={input.length === 0}
-                onClick={() =>
+                onClick={() => {
+                  if (!session) router.push("/sign-in");
                   reply({
-                    postId,
+                    postId: comment.postId,
                     text: input,
                     replyToId: comment.replyToId ?? comment.id,
-                  })
-                }
+                  });
+                }}
               >
                 Post
               </Button>

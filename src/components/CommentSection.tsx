@@ -41,11 +41,36 @@ const CommentSection = async ({ postId }: CommentSectionProps) => {
             <div key={comment.id} className="flex flex-col">
               <div className="mb-2">
                 <PostComment
-                  postId={postId}
                   comment={comment}
                   currentVote={userVote}
                   votesAmt={votesAmt}
                 />
+
+                {comment.replies
+                  .sort((a, b) => b.votes.length - a.votes.length)
+                  .map((reply) => {
+                    let userVote: VoteType | null = null;
+                    const votesAmt = reply.votes.reduce((acc, curr) => {
+                      if (curr.userId === session?.user.id)
+                        userVote = curr.type;
+                      if (curr.type === "UP") return acc + 1;
+                      if (curr.type === "DOWN") return acc - 1;
+                      return acc;
+                    }, 0);
+
+                    return (
+                      <div
+                        key={reply.id}
+                        className="ml-2 py-2 pl-4 border-l-2 border-zinc-200"
+                      >
+                        <PostComment
+                          comment={reply}
+                          currentVote={userVote}
+                          votesAmt={votesAmt}
+                        />
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           );
