@@ -54,7 +54,7 @@ const UserIconNav = ({ user }: UserIconNavProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link href="/c/create">Create community</Link>
+          <Link href="/r/create">Create community</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
