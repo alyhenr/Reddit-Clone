@@ -85,7 +85,7 @@ export async function PATCH(req: Request) {
     return new Response("OK", { status: 200 });
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return new Response("Invalid POST request data passed", { status: 422 });
+      return new Response("Invalid POST request data", { status: 422 });
     }
 
     return new Response(
