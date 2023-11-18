@@ -1,6 +1,5 @@
 import CommentSection from "@/components/CommentSection";
 import EditorOutput from "@/components/EditorOutput";
-import PostJSX from "@/components/Post";
 import PostVoteServer from "@/components/post-vote/PostVoteServer";
 import { buttonVariants } from "@/components/ui/Button";
 import { db } from "@/lib/db";
@@ -19,7 +18,7 @@ type PageProps = {
 };
 
 export const dynamic = "force-dynamic";
-export const fetchCahe = "force-no-store";
+export const fetchCache = "force-no-store";
 
 const PostVoteLoader = () => (
   <div className="flex items-center flex-col pr-6 w-20">

@@ -1,11 +1,10 @@
+import { VOTES_STANDARD_CACHE } from "@/config";
 import { getAuthSession } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redis } from "@/lib/redis";
 import { PostVoteValidator } from "@/lib/validators/vote";
 import { CachedPost } from "@/types/redis";
 import { z } from "zod";
-
-export const VOTES_STANDARD_CACHE = 1;
 
 export async function PATCH(req: Request) {
   try {

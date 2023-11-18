@@ -25,7 +25,6 @@ const SearchBar = () => {
     data: foundCommunities,
     refetch,
     isFetched,
-    isFetching,
   } = useQuery({
     queryKey: ["search-query"],
     enabled: false,
